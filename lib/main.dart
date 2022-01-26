@@ -1,3 +1,7 @@
+// import 'dart:html';
+
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -61,23 +65,64 @@ class _MyAppState extends State<MyApp> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: Image.asset('assets/carbattery.png', ),
-                      title: const Text('At a Glance'),
-                      subtitle: Text(
-                        'Battery Details: $batteryName $capacity' + 'Whr',
-                        style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                    Container(
+                      margin: const EdgeInsets.only(left: 10, right: 10, top: 5),
+                      decoration: const BoxDecoration(
+                          // border: Border.all(),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Material(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          color: Colors.blueGrey,
+                          elevation: 30,
+                          child: Column(children: [
+                            ListTile(
+                              leading: Image.asset(
+                                'assets/carbattery.png',
+                              ),
+                              title: const Text('At a Glance'),
+                              subtitle: Text(
+                                'Battery Details: $batteryName $capacity' +
+                                    'Whr',
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
+                              ),
+                            ),
+                            Image.asset(
+                              'assets/batterywear.jpg',
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'Average Ambient Temp.: $temp   Discharge Cycles: $dischargeCycles' +
+                                    'WHr',
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.9)),
+                              ),
+                            ),
+                          ])),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 80, left: 5),
+                      color: Colors.blue,
+                      child: Material(
+                        elevation: 20,
+                        child: Container(
+                          // width: 300,
+                          height: 200,
+                          // margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
+                          child: const Text('data'),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.white70,
+                          //   shape: BoxShape.rectangle,
+                          //   borderRadius: BorderRadius.circular(5),
+                          //   // border: Border.only(bottom: 5),
+                          //   // boxShadow: const [BoxShadow(color: Colors.grey, spreadRadius:2, blurRadius: 5 , offset:Offset(5, 0) ),],
+                          // ),
+                        ),
                       ),
                     ),
-                    Image.asset('assets/batterywear.jpg',),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Average Ambient Temp.: $temp   Discharge Cycles: $dischargeCycles' +
-                            'WHr',
-                        style: TextStyle(color: Colors.black.withOpacity(0.9)),
-                      ),
-                    ),
+                    // )
                   ],
                 ),
               ),

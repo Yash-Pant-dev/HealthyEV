@@ -3,7 +3,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,6 +14,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var batteryName = 'Nexon';
+  var war1 ="this is another warning ";
+  var war2 ="this is a warning ";
+
   var temp = '-';
   var dischargeCycles = '-';
   var capacity = 46;
@@ -89,36 +92,48 @@ class _MyAppState extends State<MyApp> {
                               ),
                             ),
                             Image.asset(
-                              'assets/batterywear.jpg',
+                              'assets/batterywear.png',
                             ),
                             Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                'Average Ambient Temp.: $temp   Discharge Cycles: $dischargeCycles' +
-                                    'WHr',
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.9)),
+                              child: Center(
+                                child: Text(
+                                  'BEV Name.: $temp             Initial Capacity: $dischargeCycles' +
+                                      'WHr',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.9)),
+                                ),
                               ),
                             ),
                           ])),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 80, left: 5),
-                      color: Colors.blue,
+                      margin: const EdgeInsets.only(top: 40, left: 10, right: 10),
+                      // color: Colors.blue,
                       child: Material(
+                        color: Colors.blueGrey,
                         elevation: 20,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((10))),
                         child: Container(
-                          // width: 300,
-                          height: 200,
-                          // margin: const EdgeInsets.only(top: 50, left: 20, right: 20),
-                          child: const Text('data'),
-                          // decoration: BoxDecoration(
-                          //   color: Colors.white70,
-                          //   shape: BoxShape.rectangle,
-                          //   borderRadius: BorderRadius.circular(5),
-                          //   // border: Border.only(bottom: 5),
-                          //   // boxShadow: const [BoxShadow(color: Colors.grey, spreadRadius:2, blurRadius: 5 , offset:Offset(5, 0) ),],
-                          // ),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10))
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Center(child: const Icon(Icons.warning_outlined , color: Colors.white, size: 50,)),
+                              const Divider(thickness: 2, indent: 10, endIndent: 5,),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Text('data2: $war2', ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Text('data1: $war1'),
+                              ),
+
+                            ],
+                          ),
                         ),
                       ),
                     ),

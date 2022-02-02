@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'warningcard.dart';
+import 'recommendation.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var batteryName = 'Nexon';
-  var war1 = "this is another warning ";
+  var war1 = "This is a warning  ";
   var war2 = "this is a warning ";
 
   var temp = '-';
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/warning': (context) => WarningCard(),
+        '/warning': (context) => Recommendation(),
       },
       title: 'Flutter Demo',
       home: DefaultTabController(
@@ -338,8 +338,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: () => {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => WarningCard()))
+                    Navigator.pushNamed(context,'/recommendation'),
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add another EV'),

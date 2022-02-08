@@ -1,17 +1,34 @@
+// ignore_for_file: use_key_in_widget_constructors
 import 'package:flutter/material.dart';
-import 'caution.dart';
+// import 'package:google_fonts/google_fonts.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'By Yash Pant',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/caution': (context) => WarningCard(),
+      },
+    );
+  }
+}
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
-  
   var batteryName = 'Nexon';
-  var war1 = "This is a warning2  ";
+  var war1 = "this is another warning ";
   var war2 = "this is a warning ";
 
   var temp = '-';
@@ -21,14 +38,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/caution': (context) => Caution(),
+        '/warning': (context) => WarningCard(),
       },
       title: 'Flutter Demo',
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: kToolbarHeight/1,
             leading: const Icon(Icons.car_repair),
             title: const Text(
               'Healthy EV',
@@ -69,104 +85,90 @@ class _HomePageState extends State<HomePage> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.pushNamed(context, '/info');
-                      },
-                      child: Container(
-                        margin:
-                            const EdgeInsets.only(left: 10, right: 10, top: 15),
-                        decoration: const BoxDecoration(
-                            // border: Border.all(),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
-                        child: Material(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            color: Colors.blueGrey,
-                            elevation: 30,
-                            child: Column(children: [
-                              ListTile(
-                                leading: Hero(
-                                  tag: 'batteryIcon',
-                                  child: Image.asset(
-                                    'assets/carbattery.png',
-                                  ),
-                                ),
-                                title: const Text('At a Glance'),
-                                subtitle: Text(
-                                  'Battery Details: $batteryName $capacity' 'Whr',
+                    Container(
+                      margin:
+                          const EdgeInsets.only(left: 10, right: 10, top: 15),
+                      decoration: const BoxDecoration(
+                          // border: Border.all(),
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Material(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          color: Colors.blueGrey,
+                          elevation: 30,
+                          child: Column(children: [
+                            ListTile(
+                              leading: Image.asset(
+                                'assets/carbattery.png',
+                              ),
+                              title: const Text('At a Glance'),
+                              subtitle: Text(
+                                'Battery Details: $batteryName $capacity' +
+                                    'Whr',
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
+                              ),
+                            ),
+                            Image.asset(
+                              'assets/batterywear.png',
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: Text(
+                                  'BEV Name.: $temp             Initial Capacity: $dischargeCycles' +
+                                      'WHr',
                                   style: TextStyle(
-                                      color: Colors.black.withOpacity(0.6)),
+                                      color: Colors.black.withOpacity(0.9)),
                                 ),
                               ),
-                              Image.asset(
-                                'assets/batterywear.png',
-                                fit: BoxFit.contain,
+                            ),
+                          ])),
+                    ),
+                    Container(
+                      margin:
+                          const EdgeInsets.only(top: 40, left: 10, right: 10),
+                      // color: Colors.blue,
+                      child: Material(
+                        color: Colors.blueGrey,
+                        elevation: 20,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular((10))),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Center(
+                                child: Icon(
+                                  Icons.warning_outlined,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 2,
+                                indent: 10,
+                                endIndent: 5,
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'BEV Name.: $temp             Initial Capacity: $dischargeCycles' 'WHr',
-                                    style: TextStyle(
-                                        color: Colors.black.withOpacity(0.9)),
-                                  ),
+                                padding: const EdgeInsets.all(15.0),
+                                child: Text(
+                                  '1: $war2',
                                 ),
                               ),
-                            ])),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/caution');
-                      },
-
-                      child: Container(
-                        margin:
-                            const EdgeInsets.only(top: 40, left: 10, right: 10),
-                        // color: Colors.blue,
-                        child: Material(
-                          color: Colors.blueGrey,
-                          elevation: 20,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular((10))),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Center(
-                                  child: Icon(
-                                    Icons.warning_outlined,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                                const Divider(
-                                  thickness: 2,
-                                  indent: 10,
-                                  endIndent: 5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text(
-                                    '1: $war2',
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text('2: $war1'),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 20,bottom: 40, right: 15),
-                                  child: Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Text('Tap for more details.',)),
-                                )
-                              ],
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Text('2: $war1'),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 250, top: 20, bottom: 10),
+                                child: Text('Tap for more details.'),
+                              )
+                            ],
                           ),
                         ),
                       ),
@@ -187,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                       child: Material(
                         borderRadius: BorderRadius.circular(10),
                         elevation: 10,
-                        child:  Container(
+                        child: Container(
                           // margin: EdgeInsets.only(top: 20),
                           child: Column(
                             children: [
@@ -222,14 +224,10 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.only(
                                       left: 8, top: 8, right: 8, bottom: 16),
                                   child: Text(
-                                    "Connect with our servers online to get more accurate analysis and compare battery life with other users",
-                                    style: TextStyle(fontSize: 15),
-                                  ),
+                                      "Connect with our servers online to get more accurate analysis and compare battery life with other users" , style: TextStyle(fontSize: 15),),
                                 ),
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 20),
-                              ),
+                              Padding(padding: EdgeInsets.only(bottom: 20),),
                               Container(
                                 decoration: const BoxDecoration(
                                     borderRadius: BorderRadius.only(
@@ -310,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                                 endIndent: 35,
                               ),
                               const Padding(
-                                padding:  EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.only(bottom: 10),
                               ),
                               const Center(
                                 child: Text(
@@ -326,25 +324,16 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const Text(
                                   'Recalculate all factors by testing the BEV over longer distances.'),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 180,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.add,
-                                    size: 12,
-                                  ),
-                                  Text(
-                                    'Tap to recalibrate',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  Padding(padding: EdgeInsets.only(bottom: 20))
-                                ],
-                              ),
+                                  Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: const [
+                                Padding(padding: EdgeInsets.only(left: 180,
+                                ),),
+                                Icon(Icons.add , size: 12,),
+                                Text('Tap to recalibrate', style: TextStyle(fontSize: 12),),
+                                Padding(padding: EdgeInsets.only(bottom: 20))
+                              ],
+                            ),
                             ],
                           ),
                         ),
@@ -353,8 +342,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 floatingActionButton: FloatingActionButton.extended(
-                  onPressed: () => {
-                    Navigator.pushNamed(context,'/caution'),
+                  onPressed: ()=> {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>WarningCard()))
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add another EV'),
@@ -367,4 +356,48 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+} 
+
+class WarningCard extends StatefulWidget {
+  WarningCard({Key? key}) : super(key: key);
+
+  @override
+  State<WarningCard> createState() => _WarningCardState();
 }
+
+class _WarningCardState extends State<WarningCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // add second screen here
+      appBar: AppBar(
+        title: Text('Recommendations'),
+      ),
+      body: Container(
+        child: Text('data')
+      ),
+      floatingActionButton: FloatingActionButton (
+        onPressed: ()=> {
+          Navigator.pop(context)
+        },
+        
+        child: Text('return'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//TODO: Add toast/snackbar when data updates
+// checkout emoji_transportation_rounded as icon

@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/caution': (context) => Caution(),
+        // '/caution': (context) => Caution(), //FIXME: Not needed?
       },
       title: 'Flutter Demo',
       home: DefaultTabController(

@@ -1,4 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'caution.dart';
@@ -8,16 +10,16 @@ import 'dart:async';
 // import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  FlutterNativeSplash.removeAfter(initialization).then
   runApp(MyApp());
+  Future.delayed(Duration(seconds: 5),
+      () => {FlutterNativeSplash.removeAfter(initialization)});
 }
 
-void initialization(BuildContext ctx) async{
-  Future.delayed(Duration(seconds: 10), () {
-    print('object');
-});
-
+void initialization(BuildContext ctx) {
+  // sleep(Duration(seconds: 2));
+  print('Splash screen finished');
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 

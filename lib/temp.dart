@@ -26,6 +26,10 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
+enum {
+  
+}
 class _HomePageState extends State<HomePage> {
   var batteryName = 'Nexon';
   var war1 = "this is another warning ";

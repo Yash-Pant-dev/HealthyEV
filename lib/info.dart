@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:battery_health_monitor/HomePage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Info extends StatefulWidget {
   Info({Key? key}) : super(key: key);
@@ -19,12 +21,30 @@ class _InfoState extends State<Info> {
     'BCAP': "" //Battery Capacity
   };
 
+  // Future<SharedPreferences> prefs
+  void saveData(int a, String? val) async {
+    final pref = await SharedPreferences.getInstance();
+    if (a == 1) {
+      pref.setString('year', val!);
+      infoMap['BCAP'] = val;
+    }
+    if (a == 0) {
+      pref.setString('bevname', val!);
+      infoMap['BEVname'] = val;
+    }
+    if (a == 2) {
+      print("2:" + infoMap['BEVname']);
+      print(pref.getString('year'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Info'),
       // ),
+
       body: Container(
         child: SingleChildScrollView(
           reverse: true,
@@ -59,6 +79,7 @@ class _InfoState extends State<Info> {
                         decoration: InputDecoration(labelText: 'Vehicle Name'),
                         onSaved: (String? val) {
                           // TODO: Save to shared_pref
+                          saveData(0, val);
                         },
                         validator: (String? val) {
                           if (val!.isEmpty) {
@@ -69,9 +90,11 @@ class _InfoState extends State<Info> {
                       ),
                       TextFormField(
                         initialValue: infoMap['BCAP'],
-                        decoration: InputDecoration(labelText: 'Battery Capacity'),
+                        decoration: const InputDecoration(
+                            labelText: 'Battery Capacity(in KWh)'),
                         onSaved: (String? val) {
                           // TODO: Save to shared_pref
+                          saveData(1, val);
                         },
                         validator: (String? val) {
                           if (val!.isEmpty) {
@@ -80,6 +103,20 @@ class _InfoState extends State<Info> {
                           return null;
                         },
                       ),
+                      RaisedButton(
+                        child: const Text('Submit'),
+                        onPressed: () {
+                          if (_infokey.currentState!.validate()) {
+                            _infokey.currentState!.save();
+                            saveData(2, "");
+                            setState(() {
+                              batteryName = infoMap['BEVname'];
+                            });                                                  
+
+                            Navigator.pop<String>(context, batteryName);
+                          }
+                        },
+                      )
                     ],
                   ),
                 ),

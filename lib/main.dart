@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'homepage.dart';
 import 'caution.dart';
 import 'info.dart';
+import 'Data.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'dart:async';
 // import 'package:google_fonts/google_fonts.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/caution': (context) => Caution(),
         '/info': (context) => Info(),
+        '/data':(context) => Data(),
       },
     );
   }

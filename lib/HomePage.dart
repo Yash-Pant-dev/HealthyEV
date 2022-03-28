@@ -1,22 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'caution.dart';
+import 'Data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+var batteryName;
+var capacity;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
+  // Future<void> getData();
 }
 
 class _HomePageState extends State<HomePage> {
-  
   var batteryName = 'Nexon';
+  var capacity = '46';
+  void getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    batteryName = prefs.getString('bevname') ?? "";
+    capacity = prefs.getString('year') ?? "";
+
+    print(batteryName + "hehe" + capacity);
+    // return 1;
+  }
+
+  // int a =getData();
+  @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    super.setState(fn);
+    // batteryName = "abcd";
+  }
+
   var war1 = "This is a warning2  ";
   var war2 = "this is a warning ";
 
   var temp = '-';
   var dischargeCycles = '-';
-  var capacity = 46;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: kToolbarHeight/1,
+            toolbarHeight: kToolbarHeight / 1,
             leading: const Icon(Icons.car_repair),
             title: const Text(
               'Healthy EV',
@@ -70,15 +93,21 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: (){
-                        Navigator.pushNamed(context, '/info');
+                      onTap: ()  async{
+                        String? a =  (await Navigator.pushNamed<String>(context, '/info'));
+
+                        print("val:"+a!);
+                        setState(() {
+                          batteryName = a;
+                        });
                       },
                       child: Container(
                         margin:
                             const EdgeInsets.only(left: 10, right: 10, top: 15),
                         decoration: const BoxDecoration(
                             // border: Border.all(),
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: Material(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
@@ -94,7 +123,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 title: const Text('At a Glance'),
                                 subtitle: Text(
-                                  'Battery Details: $batteryName $capacity' 'Whr',
+                                  'Battery Details: $batteryName $capacity'
+                                  'Whr',
                                   style: TextStyle(
                                       color: Colors.black.withOpacity(0.6)),
                                 ),
@@ -107,7 +137,8 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.all(16.0),
                                 child: Center(
                                   child: Text(
-                                    'BEV Name.: $temp             Initial Capacity: $dischargeCycles' 'WHr',
+                                    'BEV Name.: $temp             Initial Capacity: $dischargeCycles'
+                                    'WHr',
                                     style: TextStyle(
                                         color: Colors.black.withOpacity(0.9)),
                                   ),
@@ -120,7 +151,6 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.pushNamed(context, '/caution');
                       },
-
                       child: Container(
                         margin:
                             const EdgeInsets.only(top: 40, left: 10, right: 10),
@@ -136,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.all(Radius.circular(10))),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: [   
                                 const Center(
                                   child: Icon(
                                     Icons.warning_outlined,
@@ -160,10 +190,13 @@ class _HomePageState extends State<HomePage> {
                                   child: Text('2: $war1'),
                                 ),
                                 const Padding(
-                                  padding: EdgeInsets.only(top: 20,bottom: 40, right: 15),
+                                  padding: EdgeInsets.only(
+                                      top: 20, bottom: 40, right: 15),
                                   child: Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Text('Tap for more details.',)),
+                                      alignment: Alignment.bottomRight,
+                                      child: Text(
+                                        'Tap for more details.',
+                                      )),
                                 )
                               ],
                             ),
@@ -187,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                       child: Material(
                         borderRadius: BorderRadius.circular(10),
                         elevation: 10,
-                        child:  Container(
+                        child: Container(
                           // margin: EdgeInsets.only(top: 20),
                           child: Column(
                             children: [
@@ -254,98 +287,103 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        top: 50,
-                        left: 20,
-                        right: 20,
-                      ),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(10),
-                        elevation: 10,
-                        color: Colors.blueGrey,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 8, right: 8, top: 20, bottom: 20),
-                          child: Column(
-                            children: [
-                              const Center(
-                                child: Text(
-                                  'Add New Data',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                              ),
-                              const Text(
-                                  'Provide additional data over various metrics to get more precise predictions.'),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 15),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 180,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/data');
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          top: 50,
+                          left: 20,
+                          right: 20,
+                        ),
+                        child: Material(
+                          borderRadius: BorderRadius.circular(10),
+                          elevation: 10,
+                          color: Colors.blueGrey,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 8, right: 8, top: 20, bottom: 20),
+                            child: Column(
+                              children: [
+                                const Center(
+                                  child: Text(
+                                    'Add New Data',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.add,
-                                    size: 12,
-                                  ),
-                                  Text(
-                                    'Tap to add',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              const Divider(
-                                thickness: 1,
-                                indent: 30,
-                                endIndent: 35,
-                              ),
-                              const Padding(
-                                padding:  EdgeInsets.only(bottom: 10),
-                              ),
-                              const Center(
-                                child: Text(
-                                  'Recalibrate Data',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
                                 ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                              ),
-                              const Text(
-                                  'Recalculate all factors by testing the BEV over longer distances.'),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 180,
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                ),
+                                const Text(
+                                    'Provide additional data over various metrics to get more precise predictions.'),
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 15),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 180,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.add,
+                                      size: 12,
+                                    ),
+                                    Text(
+                                      'Tap to add',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(
+                                  thickness: 1,
+                                  indent: 30,
+                                  endIndent: 35,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                ),
+                                const Center(
+                                  child: Text(
+                                    'Recalibrate Data',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.add,
-                                    size: 12,
-                                  ),
-                                  Text(
-                                    'Tap to recalibrate',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  Padding(padding: EdgeInsets.only(bottom: 20))
-                                ],
-                              ),
-                            ],
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                ),
+                                const Text(
+                                    'Recalculate all factors by testing the BEV over longer distances.'),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 180,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.add,
+                                      size: 12,
+                                    ),
+                                    Text(
+                                      'Tap to recalibrate',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Padding(padding: EdgeInsets.only(bottom: 20))
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -354,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: () => {
-                    Navigator.pushNamed(context,'/caution'),
+                    Navigator.pushNamed(context, '/caution'),
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add another EV'),

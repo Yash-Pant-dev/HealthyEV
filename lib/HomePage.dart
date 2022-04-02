@@ -1,47 +1,64 @@
+import 'package:battery_health_monitor/info.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'caution.dart';
 import 'Data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-var batteryName;
 var capacity;
+var year;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
+
   // Future<void> getData();
+}
+
+Future<String> getData() async {
+  var batteryName;
+  final prefs = await SharedPreferences.getInstance();
+  batteryName = prefs.getString('bevname') ?? "";
+  capacity = prefs.getString('year') ?? "";
+
+  print(batteryName + "/" + capacity);
+  // return 1;
+  return batteryName;
 }
 
 class _HomePageState extends State<HomePage> {
   var batteryName = 'Nexon';
   var capacity = '46';
-  void getData() async {
-    final prefs = await SharedPreferences.getInstance();
-    batteryName = prefs.getString('bevname') ?? "";
-    capacity = prefs.getString('year') ?? "";
+  var year = '2020';
 
-    print(batteryName + "hehe" + capacity);
-    // return 1;
+  void setInfo(int a, String b) {
+    if (a == 0) {
+      setState(() {
+        batteryName = b;
+      });
+    }
+    if (a == 1) {
+      setState(() {
+        capacity = b;
+      });
+    }
   }
 
-  // int a =getData();
-  @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    super.setState(fn);
-    // batteryName = "abcd";
-  }
-
-  var war1 = "This is a warning2  ";
-  var war2 = "this is a warning ";
-
+  //  void name(args) {
+  //   set
+  // }
+  var war1 = " ";
+  var war2 = " ";
+  // var batteryName1 = getData();
   var temp = '-';
   var dischargeCycles = '-';
   @override
   Widget build(BuildContext context) {
+    // setState(() async {
+    //   batteryName = batteryName1;
+    // });
     return MaterialApp(
       routes: {
         // '/caution': (context) => Caution(), //FIXME: Not needed?
@@ -92,61 +109,79 @@ class _HomePageState extends State<HomePage> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: ()  async{
-                        String? a =  (await Navigator.pushNamed<String>(context, '/info'));
-
-                        print("val:"+a!);
-                        setState(() {
-                          batteryName = a;
-                        });
-                      },
-                      child: Container(
-                        margin:
-                            const EdgeInsets.only(left: 10, right: 10, top: 15),
-                        decoration: const BoxDecoration(
-                            // border: Border.all(),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Material(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            color: Colors.blueGrey,
-                            elevation: 30,
-                            child: Column(children: [
-                              ListTile(
-                                leading: Hero(
-                                  tag: 'batteryIcon',
-                                  child: Image.asset(
-                                    'assets/carbattery.png',
+                    Builder(builder: (context) {
+                      return GestureDetector(
+                        onTap: () async {
+                          Map<String, dynamic> result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Info(),
+                            ),
+                          );
+                          //snackbar requires a context b/w the scaff and this so we need to use a builder
+                          ScaffoldMessenger.of(context)
+                            ..removeCurrentSnackBar()
+                            ..showSnackBar(SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                    left: 8, right: 8, bottom: 8),
+                                content: Text('Data Updated!')));
+                          setState(() {
+                            batteryName = result['BEVname'];
+                            capacity = result['BCAP'];
+                            year = result['year'];
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                              left: 10, right: 10, top: 15),
+                          decoration: const BoxDecoration(
+                              // border: Border.all(),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Material(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              color: Colors.blueGrey,
+                              elevation: 30,
+                              child: Column(children: [
+                                ListTile(
+                                  leading: Hero(
+                                    tag: 'batteryIcon',
+                                    child: Image.asset(
+                                      'assets/carbattery.png',
+                                    ),
                                   ),
-                                ),
-                                title: const Text('At a Glance'),
-                                subtitle: Text(
-                                  'Battery Details: $batteryName $capacity'
-                                  'Whr',
-                                  style: TextStyle(
-                                      color: Colors.black.withOpacity(0.6)),
-                                ),
-                              ),
-                              Image.asset(
-                                'assets/batterywear.png',
-                                fit: BoxFit.contain,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'BEV Name.: $temp             Initial Capacity: $dischargeCycles'
-                                    'WHr',
+                                  title: const Text('At a Glance'),
+                                  subtitle: Text(
+                                    'BEV Details: $batteryName ',
                                     style: TextStyle(
-                                        color: Colors.black.withOpacity(0.9)),
+                                        color: Colors.black.withOpacity(0.6)),
                                   ),
                                 ),
-                              ),
-                            ])),
-                      ),
-                    ),
+                                Image.asset(
+                                  'assets/batterywear.png',
+                                  fit: BoxFit.contain,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 16.0,
+                                      left: 16,
+                                      right: 16,
+                                      bottom: 25),
+                                  child: Center(
+                                    child: Text(
+                                      'Year of Purchase.: $year             Initial Capacity: $capacity'
+                                      'WHr',
+                                      style: TextStyle(
+                                          color: Colors.black.withOpacity(0.9)),
+                                    ),
+                                  ),
+                                ),
+                              ])),
+                        ),
+                      );
+                    }),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/caution');
@@ -166,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.all(Radius.circular(10))),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [   
+                              children: [
                                 const Center(
                                   child: Icon(
                                     Icons.warning_outlined,
@@ -179,15 +214,22 @@ class _HomePageState extends State<HomePage> {
                                   indent: 10,
                                   endIndent: 5,
                                 ),
+                                Center(
+                                  child: Text('Warnings'),
+                                ),
                                 Padding(
-                                  padding: const EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.only(
+                                      top: 15.0,
+                                      left: 10,
+                                      right: 10,
+                                      bottom: 0),
                                   child: Text(
-                                    '1: $war2',
+                                    '$war2',
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(15.0),
-                                  child: Text('2: $war1'),
+                                  child: Text(' $war1'),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.only(
@@ -288,8 +330,26 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/data');
+                      onTap: () async {
+                        Map<String, dynamic> result2 = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: ((context) => Data())));
+                        setState(() {
+                          if (result2['temp'] == 'true' &&
+                              result2['chargebw'] == 'false') {
+                            war1 =
+                                "Try to leave car in rest mode for a few minutes after every long drive";
+                          } else if (result2['temp'] == 'false' &&
+                              result2['chargebw'] == 'true') {
+                            war1 = 'Avoid fast charging';
+                          } else if (result2['chargebw'] == 'true' &&
+                              result2['temp'] == 'true') {
+                            war2 = 'Avoid fast charging';
+                          } else {
+                            war1 = 'No issues found';
+                            war2 = '';
+                          }
+                        });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(
@@ -379,7 +439,8 @@ class _HomePageState extends State<HomePage> {
                                       'Tap to recalibrate',
                                       style: TextStyle(fontSize: 12),
                                     ),
-                                    Padding(padding: EdgeInsets.only(bottom: 20))
+                                    Padding(
+                                        padding: EdgeInsets.only(bottom: 20))
                                   ],
                                 ),
                               ],
@@ -395,10 +456,10 @@ class _HomePageState extends State<HomePage> {
                     Navigator.pushNamed(context, '/caution'),
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Add another EV'),
+                  label: const Text('Refresh Data'),
                   backgroundColor: Colors.blue,
                 ),
-              ),
+              )
             ],
           ),
         ),

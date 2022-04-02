@@ -19,7 +19,7 @@ class _DataState extends State<Data> {
   GlobalKey<FormState> _dataKey = GlobalKey<FormState>();
 
   Map<String, dynamic> dataMap = <String, dynamic>{
-    'dd': "",
+    'time': "",
     'maxsoc': "",
     'minsoc': "",
     'chargebw': "", //if charged in b/w yes/no
@@ -32,8 +32,8 @@ class _DataState extends State<Data> {
       // appBar: ,
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top:55.0),
+          const Padding(
+            padding: EdgeInsets.only(top: 55.0),
             child: Material(
               elevation: 10,
               child: Text(
@@ -44,30 +44,29 @@ class _DataState extends State<Data> {
                 ),
               ),
             ),
-          )
-          ,
+          ),
           Container(
             child: Form(
               key: _dataKey,
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 50),
+                  const Padding(
+                    padding: const EdgeInsets.only(top: 50),
                   ),
                   TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Duration of trip ',
                       hintText: 'Enter the duration of trip in minutes',
                       icon: Icon(Icons.battery_charging_full),
                     ),
                     onSaved: (String? val) {
-                      dataMap['dd'] = val;
+                      dataMap['time'] = val;
                     },
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(top: 20),
                   ),
-                  Text('SOC before trip'),
+                  const Text('SOC before trip'),
                   Slider(
                     label: _value.toString(),
                     min: 0,
@@ -75,32 +74,41 @@ class _DataState extends State<Data> {
                     divisions: 10,
                     value: _value,
                     onChanged: (double val) => {
-                      setState(() => _value = val),
+                      setState(() {
+                        _value = val;
+                        dataMap['maxsoc'] = val.toString();
+                      }),
                     },
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(top: 20),
                   ),
-                  Text('SOC after trip'),
+                  const Text('SOC after trip'),
                   Slider(
                     label: _value2.toString(),
                     min: 0,
                     max: 100,
                     divisions: 10,
                     value: _value2,
-                    onChanged: (double val) => {setState(() => _value2 = val)},
+                    onChanged: (double val) => {
+                      setState(() {
+                        _value = val;
+                        dataMap['minsoc'] = val.toString();
+                      })
+                    },
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 20, left: 15, bottom: 20),
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 15, bottom: 20),
                     child: TextFormField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Distance of trip ',
                         hintText: 'Enter the distance of trip in Km',
-                        suffixIcon: Icon(Icons.add_road_rounded),
+                        suffixIcon: const Icon(Icons.add_road_rounded),
                         // icon: Icon(Icons.battery_charging_full),
                       ),
                       onSaved: (String? val) {
-                        // dataMap['dd'] = val;
+                        dataMap['dist'] = val;
                       },
                     ),
                   ),
@@ -112,10 +120,11 @@ class _DataState extends State<Data> {
                         onChanged: (bool val) => setState(
                           () {
                             _fst = val;
+                            dataMap['chargebw'] = val.toString();
                           },
                         ),
                       ),
-                      Text('Fast charging')
+                      const Text('Fast charging')
                     ],
                   ),
                   Row(
@@ -126,13 +135,23 @@ class _DataState extends State<Data> {
                         onChanged: (bool val) => setState(
                           () {
                             _fst2 = val;
+                            dataMap['temp'] = val.toString();
                           },
                         ),
                       ),
-                      Text('Ambient Operating Temperature over 30 degrees\n Celsius')
+                      const Text(
+                          'Ambient Operating Temperature over 30 degrees\n Celsius')
                     ],
                     // ],
                     // ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () => {
+                      Navigator.pop(
+                        context,dataMap
+                      )
+                    },
+                    child: const Text('Submit Data'),
                   ),
                 ],
               ),

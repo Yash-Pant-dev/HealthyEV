@@ -60,6 +60,7 @@ flutter:
     - assets/batterywear.png
     - assets/batterywear2.png
     - assets/carbattery.png
+    - assets/data.txt
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

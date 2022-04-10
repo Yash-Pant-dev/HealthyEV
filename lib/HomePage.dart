@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:battery_health_monitor/info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'caution.dart';
 import 'Data.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 var capacity;
 var year;
@@ -15,6 +21,24 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 
   // Future<void> getData();
+}
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+  print('Path:${directory.path}');
+  return directory.path;
+}
+
+Future<File> get _localFile async {
+  final path = await _localPath;
+  print('PATH:$path');
+  return File('$path/counter.json');
+}
+
+Future<File> get _tripdata async {
+  final path = await _localPath;
+  print('PATH:$path');
+  return File('$path/newdata.json');
 }
 
 Future<String> getData() async {
@@ -32,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   var batteryName = 'Nexon';
   var capacity = '46';
   var year = '2020';
-
+  var bath = "a";
   void setInfo(int a, String b) {
     if (a == 0) {
       setState(() {
@@ -159,9 +183,9 @@ class _HomePageState extends State<HomePage> {
                                         color: Colors.black.withOpacity(0.6)),
                                   ),
                                 ),
-                                Image.asset(
-                                  'assets/batterywear.png',
-                                  fit: BoxFit.contain,
+                                Padding(
+                                  padding: const EdgeInsets.all(40.0),
+                                  child: Text(bath),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -452,8 +476,27 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 floatingActionButton: FloatingActionButton.extended(
-                  onPressed: () => {
-                    Navigator.pushNamed(context, '/caution'),
+                  // FIXME: correct time and dist not being read
+                  onPressed: () async {
+                    File file = await _localFile;
+                    File file2 = await _tripdata;
+                    var newdata = await file2.readAsString();
+                    print("he:"+newdata);
+                    var newdatajson = jsonDecode(newdata);
+                    final conte = await file.readAsString();
+                    print("conte:" + conte);
+                    final conteList = jsonDecode(conte);
+                    conteList.add(newdatajson);
+                    var store = jsonEncode(conteList);
+                    file.writeAsString(
+                      store,
+                      // mode: FileMode.append
+                    );
+
+                    setState(() {
+                      bath = store;
+                    });
+                    // Navigator.pushNamed(context, '/caution'),
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Refresh Data'),

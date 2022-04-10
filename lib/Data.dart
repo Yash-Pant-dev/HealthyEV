@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'caution.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class Data extends StatefulWidget {
   Data({Key? key}) : super(key: key);
@@ -14,6 +18,18 @@ var _value = 5.0;
 var _value2 = 5.0;
 var _fst = false;
 var _fst2 = false;
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+  print('Path:${directory.path}');
+  return directory.path;
+}
+
+Future<File> get _localFile async {
+  final path = await _localPath;
+  print('PATH:$path');
+  return File('$path/newdata.json');
+}
 
 class _DataState extends State<Data> {
   GlobalKey<FormState> _dataKey = GlobalKey<FormState>();
@@ -92,7 +108,7 @@ class _DataState extends State<Data> {
                     value: _value2,
                     onChanged: (double val) => {
                       setState(() {
-                        _value = val;
+                        _value2 = val;
                         dataMap['minsoc'] = val.toString();
                       })
                     },
@@ -146,10 +162,13 @@ class _DataState extends State<Data> {
                     // ],
                   ),
                   ElevatedButton(
-                    onPressed: () => {
-                      Navigator.pop(
-                        context,dataMap
-                      )
+                    onPressed: () async {
+                      File file = await _localFile;
+
+                      file.writeAsString(jsonEncode(dataMap));
+                      print(await file.readAsString());
+
+                      Navigator.pop(context, dataMap);
                     },
                     child: const Text('Submit Data'),
                   ),

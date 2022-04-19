@@ -14,6 +14,13 @@ import 'dart:io';
 var capacity;
 var year;
 
+bool isNumeric(String s) {
+  if (s == null) {
+    return false;
+  }
+  return double.tryParse(s) != null;
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -39,6 +46,12 @@ Future<File> get _tripdata async {
   final path = await _localPath;
   print('PATH:$path');
   return File('$path/newdata.json');
+}
+
+get _general async {
+  final path = await _localPath;
+  print('PATH:$path');
+  return File('$path/general.json');
 }
 
 Future<String> getData() async {
@@ -244,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 15.0,
-                                      left: 10,
+                                      left: 18,
                                       right: 10,
                                       bottom: 0),
                                   child: Text(
@@ -375,6 +388,9 @@ class _HomePageState extends State<HomePage> {
                           }
                         });
                       },
+                      onLongPress: () async {
+                        Navigator.pushNamed(context, '/recalibrate');
+                      },
                       child: Container(
                         margin: const EdgeInsets.only(
                           top: 50,
@@ -460,7 +476,7 @@ class _HomePageState extends State<HomePage> {
                                       size: 12,
                                     ),
                                     Text(
-                                      'Tap to recalibrate',
+                                      'Long press to recalibrate',
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     Padding(
@@ -478,23 +494,170 @@ class _HomePageState extends State<HomePage> {
                 floatingActionButton: FloatingActionButton.extended(
                   // FIXME: correct time and dist not being read
                   onPressed: () async {
+                    // File gen = await _general;
+                    // var genread = await gen.readAsString();
+                    // if (genread == "") {
+                    //   gen.writeAsString("{\"name\":\"\"}");
+                    // }
+
                     File file = await _localFile;
                     File file2 = await _tripdata;
+
                     var newdata = await file2.readAsString();
-                    print("he:"+newdata);
+                    print("he:" + newdata);
                     var newdatajson = jsonDecode(newdata);
                     final conte = await file.readAsString();
                     print("conte:" + conte);
+                    //TODO: read data from this and clean up if some values are not put.
+                    //TODO: make recalibrate, with reset button
+
                     final conteList = jsonDecode(conte);
-                    conteList.add(newdatajson);
+                    print(conteList
+                        .length); //if you add a string to a dynamic type, it will become string type. eg=>print("length:"+conteList.length); doesnt work
+                    if (newdata != "[]" && newdatajson is Map) {
+                      print("MAP");
+                      conteList.add(newdatajson);
+                    } else if (newdata != "[]" && newdatajson is List) {
+                      print("LIST");
+                      conteList.addAll(newdatajson);
+                    }
+                    // clean up data
+                    double batcap = 100;
+                    double degrade = 0;
+                    double sum = 0;
+                    // variables related to warning
+                    // if last 5 entries have fc ->give warning
+                    // if last 5 entries have temp >30 ->give warning
+                    var fcwarn = 0;
+                    var maxsocwarn = 0;
+                    var tempwarn = 0;
+                    for (var i = 0; i < conteList.length; i++) {
+                      // try {
+                      print("$i:${conteList[i]}->$degrade");
+                      // var um = conteList[i];
+                      var val = conteList[i];
+                      if (conteList[i].isEmpty) {
+                        //containsKey doesnt work on empty map
+                        continue;
+                      }
+
+                      // var time = val["time"];
+                      // val["maxsoc"] = int.parse(val["maxsoc"]);
+                      // print(object)
+                      if (i == conteList.length - 1) {
+                        print("list:${conteList[i]}");
+                      }
+                      var maxsoc = val["maxsoc"];
+                      // val["minsoc"] = int.parse(val["minsoc"]);
+                      var minsoc = val["minsoc"];
+                      // val["temp"] = int.parse(val["temp"]);
+                      var temp = val["temp"];
+
+                      // var dist = val["dist"];
+
+                      if (maxsoc is String && !isNumeric(maxsoc)) {
+                        val["maxsoc"] = 90;
+                        maxsoc = 90;
+                      } else if (maxsoc is String) {
+                        if (double.parse(maxsoc) > 100 ||
+                            double.parse(maxsoc) < 0) {
+                          val["maxsoc"] = 90;
+                        } else {
+                          val["maxsoc"] = double.parse(maxsoc);
+                        }
+                      }
+
+                      if (minsoc is String && !isNumeric(minsoc)) {
+                        val["minsoc"] = 90;
+                        minsoc = 90;
+                      } else if (minsoc is String) {
+                        if (double.parse(minsoc) > 100 ||
+                            double.parse(minsoc) < 0) {
+                          val["minsoc"] = 90;
+                        } else {
+                          val["minsoc"] = double.parse(minsoc);
+                        }
+                      }
+
+                      if (temp is String && !isNumeric(temp)) {
+                        if (temp == "true") {
+                          temp = 30;
+                          val["temp"] = 30;
+                        } else if (temp == "false") {
+                          temp = 25;
+                          val["temp"] = 25;
+                        } else {
+                          val["temp"] = 90;
+                          temp = 90;
+                        }
+                      } else if (temp is String) {
+                        if (double.parse(temp) > 100 ||
+                            double.parse(temp) < 0) {
+                          val["temp"] = 90;
+                          temp = 30;
+                        } else {
+                          val["temp"] = double.parse(temp);
+                          temp = val["temp"];
+                        }
+                      }
+
+                      if (i > conteList.length - 10) {
+                        if (temp >= 30) {
+                          tempwarn++;
+                        }
+                        if (maxsoc > 50) {
+                          maxsocwarn++;
+                        }
+                      }
+
+                      if (sum <= 100) {
+                        double a = val["maxsoc"] - val["minsoc"];
+                        a = a.abs();
+                        sum += a;
+                        degrade += 1.8 * (val["temp"] - 15) * a;
+                      } else if (sum < 200) {
+                        double a = val["maxsoc"] - val["minsoc"];
+                        a = a.abs();
+                        sum += a;
+                        degrade += 1.5 * (val["temp"] - 15) * a;
+                      } else if (sum < 300) {
+                        double a = val["maxsoc"] - val["minsoc"];
+                        a = a.abs();
+                        sum += a;
+                        degrade += 1.2 * (val["temp"] - 15) * a;
+                      } else {
+                        double a = val["maxsoc"] - val["minsoc"] + 0.0;
+                        a = a.abs();
+                        sum += a;
+                        degrade += 1 * (val["temp"]) * a;
+                      }
+                      // } catch (e) {
+                      //   ;
+                      // }
+                    }
+
                     var store = jsonEncode(conteList);
                     file.writeAsString(
                       store,
                       // mode: FileMode.append
                     );
+                    List warning = [];
+                    if (tempwarn >= 5) {
+                      print('tempwarn');
+                      warning.add("High Temperature warning");
+                    }
+                    if (maxsocwarn >= 5) {
+                      print('maxsocwarn');
+                      warning.add("Max State of Charge warning");
+                    }
 
+
+                    file2.writeAsString("[]");
+                    print("$batcap:${degrade / 1000}");
                     setState(() {
-                      bath = store;
+                      bath = (batcap - degrade / 1000).toString();
+                      if (warning.length > 0) war1 = warning[0];
+                      if (warning.length > 1) war2 = warning[1];
                     });
                     // Navigator.pushNamed(context, '/caution'),
                   },

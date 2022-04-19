@@ -166,6 +166,7 @@ class _DataState extends State<Data> {
                       File file = await _localFile;
 
                       file.writeAsString(jsonEncode(dataMap));
+                      print("lala:");
                       print(await file.readAsString());
 
                       Navigator.pop(context, dataMap);

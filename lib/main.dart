@@ -8,6 +8,7 @@ import 'info.dart';
 import 'Data.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'dart:async';
+import 'recalibrate.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/caution': (context) => Caution(),
         '/info': (context) => Info(),
         '/data':(context) => Data(),
+        '/recalibrate':(context) => Recalibrate(),
       },
     );
   }

@@ -90,6 +90,7 @@ class _InfoState extends State<Info> {
                             saveData(0, val);
                           },
                           validator: (String? val) {
+                            
                             if (val!.isEmpty) {
                               return 'Kindly input the vehicle name';
                             }

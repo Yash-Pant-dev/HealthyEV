@@ -10,6 +10,7 @@ import 'Data.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'globals.dart' as globals;
 
 var capacity;
 var year;
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   var batteryName = 'Nexon';
   var capacity = '46';
   var year = '2020';
-  var bath = "a";
+  var bath = "100";
   void setInfo(int a, String b) {
     if (a == 0) {
       setState(() {
@@ -197,15 +198,20 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(40.0),
-                                  child: Text(bath),
+                                  padding: const EdgeInsets.only(
+                                      top: 40.0, bottom: 20),
+                                  child: Text("$bath%",
+                                      style: TextStyle(
+                                          fontSize: 40,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 16.0,
                                       left: 16,
                                       right: 16,
-                                      bottom: 25),
+                                      bottom: 10),
                                   child: Center(
                                     child: Text(
                                       'Year of Purchase.: $year             Initial Capacity: $capacity'
@@ -215,6 +221,10 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
+                                Text(
+                                  'Tap to add details.',
+                                  style: TextStyle(color: Colors.white),
+                                )
                               ])),
                         ),
                       );
@@ -371,22 +381,22 @@ class _HomePageState extends State<HomePage> {
                         Map<String, dynamic> result2 = await Navigator.push(
                             context,
                             MaterialPageRoute(builder: ((context) => Data())));
-                        setState(() {
-                          if (result2['temp'] == 'true' &&
-                              result2['chargebw'] == 'false') {
-                            war1 =
-                                "Try to leave car in rest mode for a few minutes after every long drive";
-                          } else if (result2['temp'] == 'false' &&
-                              result2['chargebw'] == 'true') {
-                            war1 = 'Avoid fast charging';
-                          } else if (result2['chargebw'] == 'true' &&
-                              result2['temp'] == 'true') {
-                            war2 = 'Avoid fast charging';
-                          } else {
-                            war1 = 'No issues found';
-                            war2 = '';
-                          }
-                        });
+                        // setState(() {
+                        //   if (result2['temp'] == 'true' &&
+                        //       result2['chargebw'] == 'false') {
+                        //     war1 =
+                        //         "Try to leave car in rest mode for a few minutes after every long drive";
+                        //   } else if (result2['temp'] == 'false' &&
+                        //       result2['chargebw'] == 'true') {
+                        //     war1 = 'Avoid fast charging';
+                        //   } else if (result2['chargebw'] == 'true' &&
+                        //       result2['temp'] == 'true') {
+                        //     war2 = 'Avoid fast charging';
+                        //   } else {
+                        //     war1 = 'No issues found';
+                        //     war2 = '';
+                        //   }
+                        // });
                       },
                       onLongPress: () async {
                         Navigator.pushNamed(context, '/recalibrate');
@@ -419,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.only(bottom: 10),
                                 ),
                                 const Text(
-                                    'Provide additional data over various metrics to get more precise predictions.'),
+                                    'Provide additional data over various metrics to get more precise predictions for a single trip.'),
                                 const Padding(
                                   padding: EdgeInsets.only(bottom: 15),
                                 ),
@@ -462,13 +472,15 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.only(bottom: 10),
                                 ),
                                 const Text(
-                                    'Recalculate all factors by testing the BEV over longer distances.'),
+                                    'Recalculate degradation with support for adding massive amounts of data at once, in JSON.'),
+                                Padding(padding: EdgeInsets.only(top: 10)),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: const [
                                     Padding(
                                       padding: EdgeInsets.only(
                                         left: 180,
+                                        // top: 50
                                       ),
                                     ),
                                     Icon(
@@ -480,7 +492,7 @@ class _HomePageState extends State<HomePage> {
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     Padding(
-                                        padding: EdgeInsets.only(bottom: 20))
+                                        padding: EdgeInsets.only(bottom: 15))
                                   ],
                                 ),
                               ],
@@ -564,16 +576,17 @@ class _HomePageState extends State<HomePage> {
                           val["maxsoc"] = 90;
                         } else {
                           val["maxsoc"] = double.parse(maxsoc);
+                          maxsoc = val["maxsoc"];
                         }
                       }
 
                       if (minsoc is String && !isNumeric(minsoc)) {
-                        val["minsoc"] = 90;
-                        minsoc = 90;
+                        val["minsoc"] = 60;
+                        minsoc = 60;
                       } else if (minsoc is String) {
                         if (double.parse(minsoc) > 100 ||
                             double.parse(minsoc) < 0) {
-                          val["minsoc"] = 90;
+                          val["minsoc"] = 60;
                         } else {
                           val["minsoc"] = double.parse(minsoc);
                         }
@@ -587,13 +600,13 @@ class _HomePageState extends State<HomePage> {
                           temp = 25;
                           val["temp"] = 25;
                         } else {
-                          val["temp"] = 90;
-                          temp = 90;
+                          val["temp"] = 30;
+                          temp = 30;
                         }
                       } else if (temp is String) {
                         if (double.parse(temp) > 100 ||
                             double.parse(temp) < 0) {
-                          val["temp"] = 90;
+                          val["temp"] = 30;
                           temp = 30;
                         } else {
                           val["temp"] = double.parse(temp);
@@ -605,37 +618,61 @@ class _HomePageState extends State<HomePage> {
                         if (temp >= 30) {
                           tempwarn++;
                         }
-                        if (maxsoc > 50) {
+                        if (maxsoc > 70) {
                           maxsocwarn++;
                         }
                       }
 
-                      if (sum <= 100) {
+                      if (sum <= 300 * 100) {
                         double a = val["maxsoc"] - val["minsoc"];
                         a = a.abs();
                         sum += a;
-                        degrade += 1.8 * (val["temp"] - 15) * a;
-                      } else if (sum < 200) {
+                        if (val["temp"] < 20)
+                          degrade += 1 * (val["temp"] - 0) * a;
+                        else if (val["temp"] < 30)
+                          degrade += 1.2 * (val["temp"] - 10) * a;
+                        else if (val["temp"] < 45)
+                          degrade += 2 * (val["temp"] - 25) * a;
+                        else if (val["temp"] >= 45)
+                          degrade += 3.2 * (val["temp"] - 35) * a*1.5;
+                        // degrade = degrade * 1.5;
+                      } else if (sum < 1800 * 100) {
                         double a = val["maxsoc"] - val["minsoc"];
                         a = a.abs();
                         sum += a;
-                        degrade += 1.5 * (val["temp"] - 15) * a;
-                      } else if (sum < 300) {
-                        double a = val["maxsoc"] - val["minsoc"];
-                        a = a.abs();
-                        sum += a;
-                        degrade += 1.2 * (val["temp"] - 15) * a;
+
+                        if (val["temp"] < 20)
+                          degrade += 1 * (val["temp"] - 0) * a;
+                        else if (val["temp"] < 30)
+                          degrade += 1.2 * (val["temp"] - 10) * a;
+                        else if (val["temp"] < 45)
+                          degrade += 2 * (val["temp"] - 25) * a;
+                        else if (val["temp"] >= 45)
+                          degrade += 3.2 * (val["temp"] - 35) * a*0.4;
+
+                          // degrade*=0.4;
                       } else {
                         double a = val["maxsoc"] - val["minsoc"] + 0.0;
                         a = a.abs();
                         sum += a;
-                        degrade += 1 * (val["temp"]) * a;
+                        
+                        if (val["temp"] < 20)
+                          degrade += 1 * (val["temp"] - 0) * a;
+                        else if (val["temp"] < 30)
+                          degrade += 1.2 * (val["temp"] - 10) * a;
+                        else if (val["temp"] < 45)
+                          degrade += 2 * (val["temp"] - 25) * a;
+                        else if (val["temp"] >= 45)
+                          degrade += 3.2 * (val["temp"] - 35) * a*0.3;
+
+                          // degrade*=0.3;
                       }
+
                       // } catch (e) {
                       //   ;
                       // }
                     }
-
+                    print("sum:$sum");
                     var store = jsonEncode(conteList);
                     file.writeAsString(
                       store,
@@ -651,13 +688,24 @@ class _HomePageState extends State<HomePage> {
                       warning.add("Max State of Charge warning");
                     }
 
-
+                    war1 = "";
+                    war2 = "";
                     file2.writeAsString("[]");
-                    print("$batcap:${degrade / 1000}");
+                    print("$batcap:${degrade /(6* 10000)}");
                     setState(() {
-                      bath = (batcap - degrade / 1000).toString();
-                      if (warning.length > 0) war1 = warning[0];
-                      if (warning.length > 1) war2 = warning[1];
+                      bath = (batcap - degrade / (6*10000)).round().toString();
+                      if (warning.length == 0) {
+                        war1 = "No issues found.";
+                        war2 = "";
+                      }
+                      if (warning.length > 0) {
+                        war1 = warning[0];
+                        globals.gwar1 = war1;
+                      }
+                      if (warning.length > 1) {
+                        war2 = warning[1];
+                        globals.gwar2 = war2;
+                      }
                     });
                     // Navigator.pushNamed(context, '/caution'),
                   },
